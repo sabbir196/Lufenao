@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lufe Nao - Game Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0e1a; color: #fff; font-family: 'Hind Siliguri', sans-serif; padding-bottom: 80px; }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #00f0ff44; border-radius: 4px; }
+    header { background: #0d1224; border-bottom: 1px solid rgba(0,240,255,0.15); padding: 14px 16px; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 20px; font-weight: 900; color: #00f0ff; letter-spacing: 1px; animation: glow 3s infinite; }
+    .logo-sub { font-size: 9px; color: #7b2fff; letter-spacing: 3px; text-transform: uppercase; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .btn-login { background: transparent; border: 1px solid rgba(0,240,255,0.3); border-radius: 20px; padding: 6px 14px; color: #00f0ff; font-size: 12px; cursor: pointer; font-family: inherit; }
+    .btn-reg { background: linear-gradient(135deg,#00f0ff,#7b2fff); border: none; border-radius: 20px; padding: 6px 14px; color: #fff; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 600; }
+    .search-wrap { display: flex; gap: 8px; }
+    .search-input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(0,240,255,0.2); border-radius: 24px; padding: 9px 16px 9px 36px; color: #fff; font-size: 13px; font-family: inherit; outline: none; }
+    .search-btn { background: linear-gradient(135deg,#00f0ff,#7b2fff); border: none; border-radius: 20px; padding: 9px 16px; color: #fff; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 600; }
+    .ticker { background: rgba(0,240,255,0.06); border-bottom: 1px solid rgba(0,240,255,0.1); padding: 8px 0; overflow: hidden; display: flex; align-items: center; }
+    .ticker-text { animation: ticker 20s linear infinite; white-space: nowrap; font-size: 12px; color: #00f0ff; padding-left: 100%; }
+    .hero { margin: 16px; border-radius: 16px; background: linear-gradient(135deg,#0d1f3c,#1a0d3c,#0d2a1f); border: 1px solid rgba(0,240,255,0.2); padding: 24px 20px; }
+    .hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    .hero p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .btn-hero { background: linear-gradient(135deg,#00f0ff,#7b2fff); border: none; border-radius: 20px; padding: 10px 24px; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .cats { padding: 0 16px 12px; overflow-x: auto; display: flex; gap: 8px; }
+    .cat-btn { flex-shrink: 0; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 8px 16px; color: #fff; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+    .cat-btn.active { background: linear-gradient(135deg,#00f0ff,#7b2fff); border: none; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 0 16px; }
+    .game-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+    .game-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,240,255,0.2); }
+    .game-thumb { height: 90px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .game-thumb .no-img { font-size: 32px; }
+    .hot-badge { position: absolute; top: 5px; left: 5px; background: #ff4444; color: #fff; font-size: 8px; font-weight: 700; border-radius: 4px; padding: 2px 5px; }
+    .rating { position: absolute; bottom: 4px; left: 6px; font-size: 10px; color: #fff; display: flex; align-items: center; gap: 2px; }
+    .game-info { padding: 8px; }
+    .game-name { font-size: 11px; font-weight: 600; margin-bottom: 4px; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .game-footer { display: flex; justify-content: space-between; align-items: center; }
+    .game-genre { font-size: 9px; color: #64748b; }
+    .play-btn { font-size: 9px; color: #00f0ff; background: rgba(0,240,255,0.1); border-radius: 4px; padding: 2px 5px; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,14,26,0.97); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,240,255,0.15); display: flex; justify-content: space-around; padding: 10px 0 14px; z-index: 100; }
+    .nav-btn { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 16px; }
+    .nav-label { font-size: 10px; font-family: inherit; color: #64748b; }
+    .nav-label.active { color: #00f0ff; font-weight: 700; }
+    .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: #00f0ff; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 0 16px; }
+    .load-more { text-align: center; margin: 20px 0; }
+    .load-more-btn { background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); border-radius: 20px; padding: 12px 32px; color: #00f0ff; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: 600; }
+    .skeleton { background: rgba(255,255,255,0.05); border-radius: 14px; overflow: hidden; }
+    .skeleton-img { height: 90px; background: rgba(255,255,255,0.07); }
+    .skeleton-info { padding: 8px; }
+    .skeleton-line { height: 10px; background: rgba(255,255,255,0.07); border-radius: 4px; margin-bottom: 6px; }
+    .skeleton-line.short { width: 60%; }
+    .empty { text-align: center; padding: 60px 20px; color: #4b5563; }
+    @keyframes glow { 0%,100%{text-shadow:0 0 10px #00f0ff,0 0 20px #00f0ff}50%{text-shadow:0 0 20px #00f0ff,0 0 40px #00f0ff} }
+    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <div class="logo">🎮 LUFE NAO</div>
+      <div class="logo-sub">Game Portal</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-login">লগইন</button>
+      <button class="btn-reg">নিবন্ধন</button>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <div style="position:relative;flex:1">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="গেম খুঁজুন..." onkeydown="if(event.key==='Enter')doSearch()">
+    </div>
+    <button class="search-btn" onclick="doSearch()">খুঁজুন</button>
+  </div>
+</header>
+
+<div class="ticker">
+  <span style="padding-left:16px;font-size:14px;flex-shrink:0">📢</span>
+  <div style="overflow:hidden;flex:1">
+    <div class="ticker-text">🎮 হাজার হাজার গেম এখন Lufe Nao-তে! &nbsp;&nbsp;&nbsp; 🏆 সেরা গেম বিনামূল্যে খেলো &nbsp;&nbsp;&nbsp; 🚀 প্রতিদিন নতুন গেম আপডেট &nbsp;&nbsp;&nbsp; 🎯 RAWG Database থেকে সরাসরি &nbsp;&nbsp;&nbsp; 🎮 হাজার হাজার গেম এখন Lufe Nao-তে! &nbsp;&nbsp;&nbsp; 🏆 সেরা গেম বিনামূল্যে খেলো</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div style="font-size:11px;color:#00f0ff;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px">
+    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00ff88;margin-right:6px;vertical-align:middle"></span>লাইভ গেমিং
+  </div>
+  <h1>🎮 হাজারো গেম<br>এখনই খেলো!</h1>
+  <p>RAWG Database থেকে সরাসরি গেম</p>
+  <button class="btn-hero" onclick="setCategory('')">সব গেম দেখো →</button>
+</div>
+
+<div class="cats" id="cats"></div>
+
+<div class="section-header">
+  <div id="sectionTitle" style="font-size:15px;font-weight:700">সব গেম</div>
+  <div id="gameCount" style="font-size:12px;color:#64748b">লোড হচ্ছে...</div>
+</div>
+
+<div class="grid" id="gameGrid"></div>
+<div class="load-more" id="loadMoreWrap" style="display:none">
+  <button class="load-more-btn" onclick="loadMore()">আরো গেম দেখো ↓</button>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn" onclick="setNav('হোম')"><span style="font-size:20px">🏠</span><span class="nav-label active" id="nav-হোম">হোম</span></button>
+  <button class="nav-btn" onclick="setNav('গেম')"><span style="font-size:20px">🎮</span><span class="nav-label" id="nav-গেম">গেম</span></button>
+  <button class="nav-btn" onclick="setNav('র‍্যাংকিং')"><span style="font-size:20px">🏆</span><span class="nav-label" id="nav-র‍্যাংকিং">র‍্যাংকিং</span></button>
+  <button class="nav-btn" onclick="setNav('প্রোফাইল')"><span style="font-size:20px">👤</span><span class="nav-label" id="nav-প্রোফাইল">প্রোফাইল</span></button>
+</div>
+
+<script>
+const API_KEY = 'cf96f13bd62c4223a6aef3c5ae5ce078';
+const BASE = 'https://api.rawg.io/api';
+const CATS = [
+  {label:'সব',genre:''},
+  {label:'অ্যাকশন',genre:'action'},
+  {label:'পাজল',genre:'puzzle'},
+  {label:'স্পোর্টস',genre:'sports'},
+  {label:'অ্যাডভেঞ্চার',genre:'adventure'},
+  {label:'রেসিং',genre:'racing'},
+  {label:'RPG',genre:'role-playing-games-rpg'},
+];
+let currentGenre = '', currentSearch = '', currentPage = 1, hasMore = false, allGames = [];
+
+function renderCats() {
+  const el = document.getElementById('cats');
+  el.innerHTML = CATS.map(c => `<button class="cat-btn${c.genre===currentGenre&&!currentSearch?' active':''}" onclick="setCategory('${c.genre}')">${c.label}</button>`).join('');
+}
+
+function setCategory(genre) {
+  currentGenre = genre; currentSearch = ''; currentPage = 1; allGames = [];
+  document.getElementById('searchInput').value = '';
+  const cat = CATS.find(c=>c.genre===genre);
+  document.getElementById('sectionTitle').textContent = cat ? cat.label==='সব'?'সব গেম':cat.label : 'সব গেম';
+  renderCats(); fetchGames(true);
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if(!q) return;
+  currentSearch = q; currentGenre = ''; currentPage = 1; allGames = [];
+  document.getElementById('sectionTitle').textContent = `"${q}" এর ফলাফল`;
+  renderCats(); fetchGames(true);
+}
+
+function setNav(name) {
+  document.querySelectorAll('.nav-label').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('nav-'+name);
+  if(el) el.classList.add('active');
+}
+
+function showSkeletons() {
+  const grid = document.getElementById('gameGrid');
+  grid.innerHTML = Array.from({length:12}).map(()=>`
+    <div class="skeleton">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-info">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    </div>`).join('');
+}
+
+async function fetchGames(replace=true) {
+  if(replace) showSkeletons();
+  let url = `${BASE}/games?key=${API_KEY}&page_size=12&page=${currentPage}&ordering=-rating`;
+  if(currentGenre) url += `&genres=${currentGenre}`;
+  if(currentSearch) url += `&search=${encodeURIComponent(currentSearch)}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if(replace) allGames = data.results || [];
+    else allGames = [...allGames, ...(data.results||[])];
+    hasMore = !!data.next;
+    renderGames();
+    document.getElementById('gameCount').textContent = allGames.length + '+ গেম';
+    document.getElementById('loadMoreWrap').style.display = hasMore ? 'block' : 'none';
+  } catch(e) {
+    document.getElementById('gameGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#ef4444">⚠️ গেম লোড হয়নি। আবার চেষ্টা করুন।</div>';
+  }
+}
+
+function renderGames() {
+  const grid = document.getElementById('gameGrid');
+  if(!allGames.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div style="font-size:40px;margin-bottom:12px">🔍</div><div>কোনো গেম পাওয়া যায়নি</div></div>';
+    return;
+  }
+  grid.innerHTML = allGames.map((g,i)=>{
+    const url = g.website || `https://www.rawg.io/games/${g.slug}`;
+    const genre = g.genres&&g.genres[0] ? g.genres[0].name : 'Game';
+    const img = g.background_image ? `<img src="${g.background_image}" alt="${g.name}" loading="lazy">` : `<div class="no-img">🎮</div>`;
+    const hot = g.rating >= 4 ? '<span class="hot-badge">HOT</span>' : '';
+    const rating = g.rating ? `<div class="rating">⭐ ${g.rating.toFixed(1)}</div>` : '';
+    return `<div class="game-card" onclick="window.open('${url}','_blank')">
+      <div class="game-thumb" style="background:hsl(${(i*37)%360},40%,12%)">${img}${hot}${rating}</div>
+      <div class="game-info">
+        <div class="game-name">${g.name}</div>
+        <div class="game-footer">
+          <span class="game-genre">${genre}</span>
+          <span class="play-btn">খেলো ▶</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadMore() {
+  currentPage++;
+  fetchGames(false);
+}
+
+renderCats();
+fetchGames(true);
+</script>
+</body>
+</html>
